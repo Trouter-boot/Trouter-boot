@@ -4,292 +4,383 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Smart AI Router</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  
+
   body {
     min-height: 100vh;
-    background: #0a0a0f;
+    background: #080810;
     color: #fff;
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 40px 20px;
+    padding: 50px 20px;
   }
 
-  h1 {
-    font-size: 2.2rem;
-    background: linear-gradient(135deg, #a78bfa, #60a5fa);
+  .header { text-align: center; margin-bottom: 48px; }
+
+  .header h1 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #c084fc, #818cf8, #38bdf8);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin-bottom: 8px;
-    text-align: center;
+    margin-bottom: 10px;
   }
 
-  p.subtitle {
-    color: #666;
-    margin-bottom: 40px;
-    text-align: center;
-  }
+  .header p { color: #555; font-size: 1rem; }
 
-  .input-box {
+  .input-wrap {
     width: 100%;
-    max-width: 700px;
-    background: #13131f;
-    border: 1px solid #2a2a3f;
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 20px;
+    max-width: 720px;
+    background: #0f0f1a;
+    border: 1.5px solid #1e1e35;
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 16px;
+    transition: border-color 0.3s;
   }
+
+  .input-wrap:focus-within { border-color: #7c3aed; }
 
   textarea {
     width: 100%;
     background: transparent;
     border: none;
     outline: none;
-    color: #fff;
-    font-size: 1rem;
+    color: #e2e8f0;
+    font-size: 1.05rem;
     resize: none;
-    min-height: 100px;
+    min-height: 110px;
     font-family: inherit;
+    line-height: 1.6;
   }
 
-  textarea::placeholder { color: #444; }
+  textarea::placeholder { color: #333; }
 
-  button#routeBtn {
-    width: 100%;
-    padding: 14px;
-    background: linear-gradient(135deg, #7c3aed, #3b82f6);
+  .input-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #1a1a2e;
+  }
+
+  .hint { color: #333; font-size: 0.8rem; }
+
+  .route-btn {
+    padding: 12px 28px;
+    background: linear-gradient(135deg, #7c3aed, #4f46e5);
     border: none;
     border-radius: 12px;
     color: white;
-    font-size: 1.1rem;
+    font-size: 1rem;
     cursor: pointer;
+    font-weight: 700;
+    font-family: inherit;
+    transition: transform 0.2s, opacity 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .route-btn:hover { transform: translateY(-2px); opacity: 0.9; }
+
+  #result { width: 100%; max-width: 720px; margin-top: 32px; }
+
+  .result-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #444;
+    margin-bottom: 14px;
     font-weight: 600;
-    transition: opacity 0.2s;
   }
 
-  button#routeBtn:hover { opacity: 0.85; }
-
-  #result {
-    width: 100%;
-    max-width: 700px;
-    display: none;
+  .best-card {
+    background: linear-gradient(135deg, #13103a, #0f1729);
+    border: 1.5px solid #7c3aed;
+    border-radius: 20px;
+    padding: 28px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
   }
 
-  .ai-card {
-    background: #13131f;
-    border: 1px solid #2a2a3f;
-    border-radius: 16px;
-    padding: 20px;
+  .best-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #7c3aed, #38bdf8);
+  }
+
+  .card-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     margin-bottom: 16px;
   }
 
-  .ai-card.best {
-    border-color: #7c3aed;
-    box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
-  }
+  .ai-emoji { font-size: 2rem; }
 
-  .ai-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 12px;
-  }
+  .ai-info { flex: 1; }
 
   .ai-name {
-    font-size: 1.1rem;
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin-bottom: 2px;
+  }
+
+  .ai-tagline { color: #666; font-size: 0.85rem; }
+
+  .best-badge {
+    background: linear-gradient(135deg, #7c3aed, #4f46e5);
+    color: white;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 0.75rem;
     font-weight: 700;
   }
 
-  .badge {
-    background: #7c3aed;
-    color: white;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 0.75rem;
-  }
-
-  .reason {
-    color: #aaa;
-    font-size: 0.9rem;
-    margin-bottom: 14px;
-    line-height: 1.5;
+  .reason-box {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid #1e1e35;
+    border-radius: 12px;
+    padding: 14px 18px;
+    color: #94a3b8;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
   }
 
   .open-btn {
-    display: inline-block;
-    padding: 10px 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 12px;
+    color: white;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: transform 0.2s, opacity 0.2s;
+  }
+
+  .open-btn:hover { transform: translateY(-2px); opacity: 0.85; }
+
+  .others-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 8px;
+  }
+
+  .other-card {
+    background: #0f0f1a;
+    border: 1.5px solid #1a1a2e;
+    border-radius: 16px;
+    padding: 20px;
+    transition: border-color 0.2s;
+  }
+
+  .other-card:hover { border-color: #2a2a4a; }
+
+  .other-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .other-name { font-size: 1rem; font-weight: 700; }
+
+  .other-reason {
+    color: #555;
+    font-size: 0.83rem;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+
+  .other-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 16px;
     border-radius: 10px;
     color: white;
     text-decoration: none;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     transition: opacity 0.2s;
   }
 
-  .open-btn:hover { opacity: 0.8; }
+  .other-btn:hover { opacity: 0.8; }
 
-  .loading {
-    text-align: center;
-    color: #7c3aed;
-    padding: 30px;
-    font-size: 1rem;
-  }
-
-  .section-title {
-    color: #555;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 12px;
-    margin-top: 4px;
+  @media (max-width: 500px) {
+    .others-grid { grid-template-columns: 1fr; }
+    .header h1 { font-size: 2rem; }
   }
 </style>
 </head>
 <body>
 
-<h1>🧠 Smart AI Router</h1>
-<p class="subtitle">আপনার কাজ বুঝে সেরা AI খুঁজে দেবো</p>
-
-<div class="input-box">
-  <textarea id="taskInput" placeholder="আপনার কাজ বা প্রশ্ন লিখুন... যেমন: একটা Python code লিখে দাও, বা বাংলাদেশের ইতিহাস সম্পর্কে জানতে চাই"></textarea>
+<div class="header">
+  <h1>🧠 Smart AI Router</h1>
+  <p>আপনার কাজ বুঝে সেরা AI খুঁজে দেবো — ০ টাকায়</p>
 </div>
 
-<button id="routeBtn" onclick="routeTask()">🚀 সেরা AI খুঁজো</button>
+<div class="input-wrap">
+  <textarea id="taskInput" placeholder="আপনার কাজ বা প্রশ্ন লিখুন...&#10;যেমন: 2+2-5=? অথবা একটা গল্প লিখো অথবা AI নিয়ে research paper খুঁজো"></textarea>
+  <div class="input-footer">
+    <span class="hint">Ctrl + Enter দিয়েও search করতে পারবেন</span>
+    <button class="route-btn" onclick="routeTask()">🚀 সেরা AI খুঁজো</button>
+  </div>
+</div>
 
 <div id="result"></div>
 
 <script>
-const AI_INFO = {
+const AIs = {
   claude: {
     name: "Claude",
     emoji: "🔮",
+    tagline: "Anthropic এর AI — লেখা ও বিশ্লেষণে সেরা",
     color: "#7c3aed",
     url: (q) => `https://claude.ai/new?q=${encodeURIComponent(q)}`
   },
   chatgpt: {
     name: "ChatGPT",
     emoji: "🤖",
+    tagline: "OpenAI এর AI — Math ও Coding এ সেরা",
     color: "#10a37f",
     url: (q) => `https://chatgpt.com/?q=${encodeURIComponent(q)}`
   },
   gemini: {
     name: "Gemini",
     emoji: "✨",
+    tagline: "Google এর AI — Real-time তথ্যে সেরা",
     color: "#4285f4",
     url: (q) => `https://gemini.google.com/app?q=${encodeURIComponent(q)}`
-  },
-  perplexity: {
-    name: "Perplexity",
-    emoji: "🔍",
-    color: "#20b2aa",
-    url: (q) => `https://www.perplexity.ai/?q=${encodeURIComponent(q)}`
-  },
-  consensus: {
-    name: "Consensus",
-    emoji: "📚",
-    color: "#f59e0b",
-    url: (q) => `https://consensus.app/search/?q=${encodeURIComponent(q)}`
   }
 };
 
-async function routeTask() {
+const RULES = [
+  {
+    keywords: ['code','coding','program','python','javascript','java','c++','bug','error','function','algorithm','math','calculation','solve','equation','গণিত','সমীকরণ','হিসাব','calculate','=?','integral','derivative','calculus','algebra','geometry','trigonometry'],
+    best: 'chatgpt',
+    reason: '🔢 Math ও Coding এ ChatGPT বিশ্বের সেরা। Step-by-step সমাধান দেয়, কোনো ভুল করে না।',
+    others: [
+      { ai: 'claude', reason: 'Code explain ও debug করতে দারুণ' },
+      { ai: 'gemini', reason: 'Technical সমস্যায় সাহায্য করে' }
+    ]
+  },
+  {
+    keywords: ['news','আজকের','current','latest','এখন','today','weather','আবহাওয়া','recent','2024','2025','2026','কত দাম','price','stock','market'],
+    best: 'gemini',
+    reason: '🌍 Real-time তথ্য ও আজকের news এ Gemini সেরা। Google এর সব data ব্যবহার করে।',
+    others: [
+      { ai: 'chatgpt', reason: 'সাধারণ তথ্যের জন্য ভালো' },
+      { ai: 'claude', reason: 'তথ্য বিশ্লেষণ করতে সাহায্য করবে' }
+    ]
+  },
+  {
+    keywords: ['লেখো','লিখ','গল্প','কবিতা','বাংলা','অনুবাদ','explain','বুঝিয়ে','analysis','সারাংশ','summary','translate','write','essay','creative','email','letter','চিঠি','রচনা','প্রবন্ধ'],
+    best: 'claude',
+    reason: '✍️ লেখালেখি, বিশ্লেষণ ও বাংলায় Claude সবচেয়ে সেরা। সুন্দর ও গভীর উত্তর দেয়।',
+    others: [
+      { ai: 'chatgpt', reason: 'Creative writing এ ভালো বিকল্প' },
+      { ai: 'gemini', reason: 'বিভিন্ন ভাষায় সাহায্য করে' }
+    ]
+  },
+  {
+    keywords: ['image','ছবি','photo','video','ভিডিও','visual','design','diagram','chart','graph','দেখাও'],
+    best: 'gemini',
+    reason: '🖼️ Image বোঝা ও visual কাজে Gemini সবচেয়ে এগিয়ে। Multimodal AI হিসেবে সেরা।',
+    others: [
+      { ai: 'chatgpt', reason: 'Image analysis করতে পারে' },
+      { ai: 'claude', reason: 'Image নিয়ে আলোচনা করতে ভালো' }
+    ]
+  }
+];
+
+function routeTask() {
   const task = document.getElementById('taskInput').value.trim();
-  if (!task) return alert('আগে কাজ লিখুন!');
+  if (!task) { alert('আগে কাজ লিখুন!'); return; }
 
-  const resultDiv = document.getElementById('result');
-  resultDiv.style.display = 'block';
-  resultDiv.innerHTML = '<div class="loading">🔄 বিশ্লেষণ করছি...</div>';
+  const lower = task.toLowerCase();
+  let matched = null;
 
-  try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1000,
-        messages: [{
-          role: "user",
-          content: `তুমি একটা AI Router। নিচের কাজটা বিশ্লেষণ করো এবং শুধু JSON দাও।
+  for (const rule of RULES) {
+    if (rule.keywords.some(k => lower.includes(k))) {
+      matched = rule;
+      break;
+    }
+  }
 
-কাজ: "${task}"
+  if (!matched) {
+    matched = {
+      best: 'claude',
+      reason: '🧠 সাধারণ প্রশ্ন ও যেকোনো কাজে Claude সবচেয়ে ভালো সাহায্য করে।',
+      others: [
+        { ai: 'chatgpt', reason: 'বিকল্প হিসেবে সবসময় ভালো' },
+        { ai: 'gemini', reason: 'Google এর শক্তি ব্যবহার করে' }
+      ]
+    };
+  }
 
-AI গুলো হলো: claude, chatgpt, gemini, perplexity, consensus
+  const best = AIs[matched.best];
+  const others = matched.others;
 
-নিয়ম:
-- claude: লেখা, বিশ্লেষণ, সৃজনশীল কাজ, বাংলা
-- chatgpt: coding, math, technical
-- gemini: real-time তথ্য, news, multimodal
-- perplexity: web search, current events
-- consensus: academic research, scientific papers
+  let html = `<p class="result-label">⭐ আপনার কাজের জন্য সেরা AI</p>`;
 
-শুধু এই JSON দাও, আর কিছু না:
-{
-  "best": "ai_name",
-  "best_reason": "কেন এটা সেরা (বাংলায় ১ লাইন)",
-  "others": [
-    {"ai": "ai_name", "reason": "কেন কাজে লাগবে (বাংলায়)"},
-    {"ai": "ai_name", "reason": "কেন কাজে লাগবে (বাংলায়)"}
-  ]
-}`
-        }]
-      })
-    });
-
-    const data = await response.json();
-    const text = data.content[0].text.trim();
-    const clean = text.replace(/```json|```/g, '').trim();
-    const result = JSON.parse(clean);
-
-    const best = AI_INFO[result.best];
-    let html = `<p class="section-title">⭐ সেরা AI</p>`;
-    html += `
-      <div class="ai-card best">
-        <div class="ai-header">
-          <span style="font-size:1.5rem">${best.emoji}</span>
-          <span class="ai-name">${best.name}</span>
-          <span class="badge">সেরা পছন্দ</span>
+  html += `
+    <div class="best-card">
+      <div class="card-top">
+        <span class="ai-emoji">${best.emoji}</span>
+        <div class="ai-info">
+          <div class="ai-name">${best.name}</div>
+          <div class="ai-tagline">${best.tagline}</div>
         </div>
-        <p class="reason">${result.best_reason}</p>
-        <a href="${best.url(task)}" target="_blank" class="open-btn" style="background:${best.color}">
-          ${best.name} এ খুলুন →
+        <span class="best-badge">✓ সেরা পছন্দ</span>
+      </div>
+      <div class="reason-box">${matched.reason}</div>
+      <a href="${best.url(task)}" target="_blank" class="open-btn" style="background:${best.color}">
+        ${best.emoji} ${best.name} এ এখনই খুলুন →
+      </a>
+    </div>
+  `;
+
+  html += `<p class="result-label" style="margin-top:24px">🔄 অন্য বিকল্প</p>`;
+  html += `<div class="others-grid">`;
+
+  others.forEach(o => {
+    const ai = AIs[o.ai];
+    html += `
+      <div class="other-card">
+        <div class="other-top">
+          <span style="font-size:1.4rem">${ai.emoji}</span>
+          <span class="other-name">${ai.name}</span>
+        </div>
+        <p class="other-reason">${o.reason}</p>
+        <a href="${ai.url(task)}" target="_blank" class="other-btn" style="background:${ai.color}">
+          খুলুন →
         </a>
       </div>
     `;
+  });
 
-    if (result.others && result.others.length > 0) {
-      html += `<p class="section-title">🔄 অন্য বিকল্প</p>`;
-      result.others.forEach(o => {
-        const ai = AI_INFO[o.ai];
-        if (!ai) return;
-        html += `
-          <div class="ai-card">
-            <div class="ai-header">
-              <span style="font-size:1.3rem">${ai.emoji}</span>
-              <span class="ai-name">${ai.name}</span>
-            </div>
-            <p class="reason">${o.reason}</p>
-            <a href="${ai.url(task)}" target="_blank" class="open-btn" style="background:${ai.color}">
-              ${ai.name} এ খুলুন →
-            </a>
-          </div>
-        `;
-      });
-    }
-
-    resultDiv.innerHTML = html;
-
-  } catch(e) {
-    resultDiv.innerHTML = '<div class="loading" style="color:red">❌ ত্রুটি হয়েছে। আবার চেষ্টা করুন।</div>';
-  }
+  html += `</div>`;
+  document.getElementById('result').innerHTML = html;
+  document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
 }
 
 document.getElementById('taskInput').addEventListener('keydown', function(e) {
   if (e.ctrlKey && e.key === 'Enter') routeTask();
 });
 </script>
-
 </body>
 </html>
