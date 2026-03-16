@@ -4,382 +4,196 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Smart AI Router</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    min-height: 100vh;
-    background: #080810;
-    color: #fff;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 50px 20px;
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#07070f;
+    --card:#0e0e1a;
+    --border:#1a1a2e;
+    --text:#e2e8f0;
+    --muted:#475569;
+    --purple:#7c3aed;
+    --blue:#3b82f6;
+    --green:#10a37f;
+    --gemini:#4285f4;
   }
+  body{min-height:100vh;background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;display:flex;flex-direction:column;align-items:center;padding:40px 16px 80px}
 
-  .header { text-align: center; margin-bottom: 48px; }
+  .logo{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+  .logo-icon{width:46px;height:46px;background:linear-gradient(135deg,#7c3aed,#3b82f6);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+  .logo h1{font-size:clamp(1.4rem,4vw,2rem);font-weight:800;background:linear-gradient(135deg,#c084fc,#818cf8,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .subtitle{color:var(--muted);font-size:clamp(0.8rem,2.5vw,0.92rem);margin-bottom:32px;text-align:center;padding:0 8px}
 
-  .header h1 {
-    font-size: 2.8rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, #c084fc, #818cf8, #38bdf8);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 10px;
-  }
+  .input-card{width:100%;max-width:780px;background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:18px 20px;margin-bottom:12px;transition:border-color .3s}
+  .input-card:focus-within{border-color:var(--purple)}
+  textarea{width:100%;background:transparent;border:none;outline:none;color:var(--text);font-size:clamp(0.9rem,2.5vw,1rem);resize:none;min-height:90px;font-family:inherit;line-height:1.7}
+  textarea::placeholder{color:#2a2a3f}
+  .input-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);flex-wrap:wrap;gap:8px}
+  .hint{color:#2a2a3f;font-size:0.75rem}
+  .go-btn{padding:11px 24px;background:linear-gradient(135deg,var(--purple),var(--blue));border:none;border-radius:11px;color:#fff;font-size:0.92rem;cursor:pointer;font-weight:700;font-family:inherit;transition:transform .2s,opacity .2s;display:flex;align-items:center;gap:8px;white-space:nowrap}
+  .go-btn:hover{transform:translateY(-2px)}
+  .go-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
 
-  .header p { color: #555; font-size: 1rem; }
+  #results{width:100%;max-width:780px;margin-top:24px}
+  .section-label{font-size:0.72rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:12px;font-weight:600}
 
-  .input-wrap {
-    width: 100%;
-    max-width: 720px;
-    background: #0f0f1a;
-    border: 1.5px solid #1e1e35;
-    border-radius: 20px;
-    padding: 24px;
-    margin-bottom: 16px;
-    transition: border-color 0.3s;
-  }
+  .ai-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
 
-  .input-wrap:focus-within { border-color: #7c3aed; }
+  @media(max-width:700px){.ai-grid{grid-template-columns:1fr}}
+  @media(min-width:701px) and (max-width:900px){.ai-grid{grid-template-columns:1fr 1fr}}
 
-  textarea {
-    width: 100%;
-    background: transparent;
-    border: none;
-    outline: none;
-    color: #e2e8f0;
-    font-size: 1.05rem;
-    resize: none;
-    min-height: 110px;
-    font-family: inherit;
-    line-height: 1.6;
-  }
+  .ai-card{background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:18px;display:flex;flex-direction:column;position:relative;overflow:hidden;transition:border-color .3s,transform .3s}
+  .ai-card:hover{transform:translateY(-3px)}
+  .ai-card.best{border-color:var(--purple);box-shadow:0 0 28px rgba(124,58,237,0.18)}
+  .ai-card.best::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--purple),var(--blue))}
 
-  textarea::placeholder { color: #333; }
+  .card-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .ai-emo{font-size:1.5rem;flex-shrink:0}
+  .ai-label{flex:1;min-width:0}
+  .ai-nm{font-size:0.98rem;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ai-sub{font-size:0.72rem;color:var(--muted);margin-top:1px}
+  .best-tag{background:var(--purple);color:#fff;padding:3px 9px;border-radius:20px;font-size:0.66rem;font-weight:700;white-space:nowrap;flex-shrink:0}
 
-  .input-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid #1a1a2e;
-  }
+  .answer-box{flex:1;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:12px;padding:13px;font-size:0.83rem;line-height:1.75;color:#94a3b8;margin-bottom:13px;min-height:120px;white-space:pre-wrap;word-break:break-word;overflow-y:auto;max-height:300px}
+  .answer-box.loading{display:flex;align-items:center;justify-content:center;color:var(--muted);gap:8px;min-height:120px}
+  .answer-box.loading::before{content:'';width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--purple);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
+  @keyframes spin{to{transform:rotate(360deg)}}
 
-  .hint { color: #333; font-size: 0.8rem; }
+  .card-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border-radius:11px;color:#fff;text-decoration:none;font-weight:700;font-size:0.82rem;transition:opacity .2s,transform .2s;width:100%;justify-content:center;text-align:center}
+  .card-btn:hover{opacity:0.85;transform:translateY(-1px)}
 
-  .route-btn {
-    padding: 12px 28px;
-    background: linear-gradient(135deg, #7c3aed, #4f46e5);
-    border: none;
-    border-radius: 12px;
-    color: white;
-    font-size: 1rem;
-    cursor: pointer;
-    font-weight: 700;
-    font-family: inherit;
-    transition: transform 0.2s, opacity 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .route-btn:hover { transform: translateY(-2px); opacity: 0.9; }
-
-  #result { width: 100%; max-width: 720px; margin-top: 32px; }
-
-  .result-label {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: #444;
-    margin-bottom: 14px;
-    font-weight: 600;
-  }
-
-  .best-card {
-    background: linear-gradient(135deg, #13103a, #0f1729);
-    border: 1.5px solid #7c3aed;
-    border-radius: 20px;
-    padding: 28px;
-    margin-bottom: 16px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .best-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #7c3aed, #38bdf8);
-  }
-
-  .card-top {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
-  }
-
-  .ai-emoji { font-size: 2rem; }
-
-  .ai-info { flex: 1; }
-
-  .ai-name {
-    font-size: 1.3rem;
-    font-weight: 800;
-    margin-bottom: 2px;
-  }
-
-  .ai-tagline { color: #666; font-size: 0.85rem; }
-
-  .best-badge {
-    background: linear-gradient(135deg, #7c3aed, #4f46e5);
-    color: white;
-    padding: 5px 14px;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 700;
-  }
-
-  .reason-box {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid #1e1e35;
-    border-radius: 12px;
-    padding: 14px 18px;
-    color: #94a3b8;
-    font-size: 0.92rem;
-    line-height: 1.6;
-    margin-bottom: 20px;
-  }
-
-  .open-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 24px;
-    border-radius: 12px;
-    color: white;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 0.95rem;
-    transition: transform 0.2s, opacity 0.2s;
-  }
-
-  .open-btn:hover { transform: translateY(-2px); opacity: 0.85; }
-
-  .others-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-    margin-top: 8px;
-  }
-
-  .other-card {
-    background: #0f0f1a;
-    border: 1.5px solid #1a1a2e;
-    border-radius: 16px;
-    padding: 20px;
-    transition: border-color 0.2s;
-  }
-
-  .other-card:hover { border-color: #2a2a4a; }
-
-  .other-top {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 10px;
-  }
-
-  .other-name { font-size: 1rem; font-weight: 700; }
-
-  .other-reason {
-    color: #555;
-    font-size: 0.83rem;
-    line-height: 1.5;
-    margin-bottom: 14px;
-  }
-
-  .other-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 9px 16px;
-    border-radius: 10px;
-    color: white;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.85rem;
-    transition: opacity 0.2s;
-  }
-
-  .other-btn:hover { opacity: 0.8; }
-
-  @media (max-width: 500px) {
-    .others-grid { grid-template-columns: 1fr; }
-    .header h1 { font-size: 2rem; }
+  /* Mobile touch friendly */
+  @media(max-width:480px){
+    body{padding:24px 12px 60px}
+    .go-btn{width:100%;justify-content:center}
+    .input-footer{flex-direction:column;align-items:stretch}
+    .hint{display:none}
   }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <h1>🧠 Smart AI Router</h1>
-  <p>আপনার কাজ বুঝে সেরা AI খুঁজে দেবো — ০ টাকায়</p>
+<div class="logo">
+  <div class="logo-icon">🧠</div>
+  <h1>Smart AI Router</h1>
 </div>
+<p class="subtitle">যেকোনো বিষয়ে প্রশ্ন করুন — Claude ও Gemini সরাসরি উত্তর দেবে</p>
 
-<div class="input-wrap">
-  <textarea id="taskInput" placeholder="আপনার কাজ বা প্রশ্ন লিখুন...&#10;যেমন: 2+2-5=? অথবা একটা গল্প লিখো অথবা AI নিয়ে research paper খুঁজো"></textarea>
+<div class="input-card">
+  <textarea id="taskInput" placeholder="আপনার যেকোনো প্রশ্ন বা কাজ লিখুন...&#10;যেমন: marketing strategy কী? অথবা 2+5=? অথবা আজকের news কী?"></textarea>
   <div class="input-footer">
-    <span class="hint">Ctrl + Enter দিয়েও search করতে পারবেন</span>
-    <button class="route-btn" onclick="routeTask()">🚀 সেরা AI খুঁজো</button>
+    <span class="hint">Ctrl + Enter দিয়েও করতে পারবেন</span>
+    <button class="go-btn" id="goBtn" onclick="start()">🚀 উত্তর আনো</button>
   </div>
 </div>
 
-<div id="result"></div>
+<div id="results"></div>
 
 <script>
-const AIs = {
-  claude: {
-    name: "Claude",
-    emoji: "🔮",
-    tagline: "Anthropic এর AI — লেখা ও বিশ্লেষণে সেরা",
-    color: "#7c3aed",
-    url: (q) => `https://claude.ai/new?q=${encodeURIComponent(q)}`
-  },
-  chatgpt: {
-    name: "ChatGPT",
-    emoji: "🤖",
-    tagline: "OpenAI এর AI — Math ও Coding এ সেরা",
-    color: "#10a37f",
-    url: (q) => `https://chatgpt.com/?q=${encodeURIComponent(q)}`
-  },
-  gemini: {
-    name: "Gemini",
-    emoji: "✨",
-    tagline: "Google এর AI — Real-time তথ্যে সেরা",
-    color: "#4285f4",
-    url: (q) => `https://gemini.google.com/app?q=${encodeURIComponent(q)}`
-  }
-};
+const GEMINI_KEY = "AIzaSyAnwUW36i3cZYpslGPNDPyI49WDoZX-ADw";
 
-const RULES = [
-  {
-    keywords: ['code','coding','program','python','javascript','java','c++','bug','error','function','algorithm','math','calculation','solve','equation','গণিত','সমীকরণ','হিসাব','calculate','=?','integral','derivative','calculus','algebra','geometry','trigonometry'],
-    best: 'chatgpt',
-    reason: '🔢 Math ও Coding এ ChatGPT বিশ্বের সেরা। Step-by-step সমাধান দেয়, কোনো ভুল করে না।',
-    others: [
-      { ai: 'claude', reason: 'Code explain ও debug করতে দারুণ' },
-      { ai: 'gemini', reason: 'Technical সমস্যায় সাহায্য করে' }
-    ]
-  },
-  {
-    keywords: ['news','আজকের','current','latest','এখন','today','weather','আবহাওয়া','recent','2024','2025','2026','কত দাম','price','stock','market'],
-    best: 'gemini',
-    reason: '🌍 Real-time তথ্য ও আজকের news এ Gemini সেরা। Google এর সব data ব্যবহার করে।',
-    others: [
-      { ai: 'chatgpt', reason: 'সাধারণ তথ্যের জন্য ভালো' },
-      { ai: 'claude', reason: 'তথ্য বিশ্লেষণ করতে সাহায্য করবে' }
-    ]
-  },
-  {
-    keywords: ['লেখো','লিখ','গল্প','কবিতা','বাংলা','অনুবাদ','explain','বুঝিয়ে','analysis','সারাংশ','summary','translate','write','essay','creative','email','letter','চিঠি','রচনা','প্রবন্ধ'],
-    best: 'claude',
-    reason: '✍️ লেখালেখি, বিশ্লেষণ ও বাংলায় Claude সবচেয়ে সেরা। সুন্দর ও গভীর উত্তর দেয়।',
-    others: [
-      { ai: 'chatgpt', reason: 'Creative writing এ ভালো বিকল্প' },
-      { ai: 'gemini', reason: 'বিভিন্ন ভাষায় সাহায্য করে' }
-    ]
-  },
-  {
-    keywords: ['image','ছবি','photo','video','ভিডিও','visual','design','diagram','chart','graph','দেখাও'],
-    best: 'gemini',
-    reason: '🖼️ Image বোঝা ও visual কাজে Gemini সবচেয়ে এগিয়ে। Multimodal AI হিসেবে সেরা।',
-    others: [
-      { ai: 'chatgpt', reason: 'Image analysis করতে পারে' },
-      { ai: 'claude', reason: 'Image নিয়ে আলোচনা করতে ভালো' }
-    ]
-  }
-];
+function getChatGPTUrl(q){return `https://chatgpt.com/?q=${encodeURIComponent(q)}`;}
 
-function routeTask() {
-  const task = document.getElementById('taskInput').value.trim();
-  if (!task) { alert('আগে কাজ লিখুন!'); return; }
-
-  const lower = task.toLowerCase();
-  let matched = null;
-
-  for (const rule of RULES) {
-    if (rule.keywords.some(k => lower.includes(k))) {
-      matched = rule;
-      break;
-    }
-  }
-
-  if (!matched) {
-    matched = {
-      best: 'claude',
-      reason: '🧠 সাধারণ প্রশ্ন ও যেকোনো কাজে Claude সবচেয়ে ভালো সাহায্য করে।',
-      others: [
-        { ai: 'chatgpt', reason: 'বিকল্প হিসেবে সবসময় ভালো' },
-        { ai: 'gemini', reason: 'Google এর শক্তি ব্যবহার করে' }
-      ]
-    };
-  }
-
-  const best = AIs[matched.best];
-  const others = matched.others;
-
-  let html = `<p class="result-label">⭐ আপনার কাজের জন্য সেরা AI</p>`;
-
-  html += `
-    <div class="best-card">
-      <div class="card-top">
-        <span class="ai-emoji">${best.emoji}</span>
-        <div class="ai-info">
-          <div class="ai-name">${best.name}</div>
-          <div class="ai-tagline">${best.tagline}</div>
-        </div>
-        <span class="best-badge">✓ সেরা পছন্দ</span>
-      </div>
-      <div class="reason-box">${matched.reason}</div>
-      <a href="${best.url(task)}" target="_blank" class="open-btn" style="background:${best.color}">
-        ${best.emoji} ${best.name} এ এখনই খুলুন →
-      </a>
-    </div>
-  `;
-
-  html += `<p class="result-label" style="margin-top:24px">🔄 অন্য বিকল্প</p>`;
-  html += `<div class="others-grid">`;
-
-  others.forEach(o => {
-    const ai = AIs[o.ai];
-    html += `
-      <div class="other-card">
-        <div class="other-top">
-          <span style="font-size:1.4rem">${ai.emoji}</span>
-          <span class="other-name">${ai.name}</span>
-        </div>
-        <p class="other-reason">${o.reason}</p>
-        <a href="${ai.url(task)}" target="_blank" class="other-btn" style="background:${ai.color}">
-          খুলুন →
-        </a>
-      </div>
-    `;
-  });
-
-  html += `</div>`;
-  document.getElementById('result').innerHTML = html;
-  document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+async function fetchClaude(prompt){
+  try{
+    const r=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:prompt}]})
+    });
+    const d=await r.json();
+    return d.content?.[0]?.text||"উত্তর পাওয়া যায়নি।";
+  }catch{return "❌ Claude থেকে উত্তর আনতে সমস্যা হয়েছে।";}
 }
 
-document.getElementById('taskInput').addEventListener('keydown', function(e) {
-  if (e.ctrlKey && e.key === 'Enter') routeTask();
+async function fetchGemini(prompt){
+  try{
+    const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${GEMINI_KEY}`,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})
+    });
+    const d=await r.json();
+    return d.candidates?.[0]?.content?.parts?.[0]?.text||"উত্তর পাওয়া যায়নি।";
+  }catch{return "❌ Gemini থেকে উত্তর আনতে সমস্যা হয়েছে।";}
+}
+
+function getBestAI(task){
+  const t=task.toLowerCase();
+  if(/code|coding|python|javascript|java|math|=\?|\d[\+\-\*\/]\d|algorithm|bug|function|calcul/.test(t)) return 'chatgpt';
+  if(/news|আজকের|today|weather|আবহাওয়া|latest|current|price|stock|2025|2026/.test(t)) return 'gemini';
+  if(/marketing|analytics|business|strategy|decision|plan|সিদ্ধান্ত|বিপণন|ব্যবসা|settings|technical/.test(t)) return 'claude';
+  if(/লেখো|লিখ|গল্প|কবিতা|বাংলা|অনুবাদ|summary|translate|write|essay|email/.test(t)) return 'claude';
+  if(/image|ছবি|photo|video|visual|design/.test(t)) return 'gemini';
+  return 'claude';
+}
+
+async function start(){
+  const task=document.getElementById('taskInput').value.trim();
+  if(!task){alert('আগে প্রশ্ন লিখুন!');return;}
+  const btn=document.getElementById('goBtn');
+  btn.disabled=true;btn.innerHTML='⏳ আনছি...';
+
+  const best=getBestAI(task);
+  const cards=[
+    {id:'claude',name:'Claude',emoji:'🔮',sub:'Anthropic · লেখা ও বিশ্লেষণ',color:'#7c3aed'},
+    {id:'gemini',name:'Gemini',emoji:'✨',sub:'Google · Real-time তথ্য',color:'#4285f4'},
+    {id:'chatgpt',name:'ChatGPT',emoji:'🤖',sub:'OpenAI · Math ও Coding',color:'#10a37f'},
+  ];
+
+  let html=`<p class="section-label">⚡ তিনটা AI থেকে একসাথে উত্তর</p><div class="ai-grid">`;
+  cards.forEach(c=>{
+    html+=`
+      <div class="ai-card ${c.id===best?'best':''}">
+        <div class="card-head">
+          <span class="ai-emo">${c.emoji}</span>
+          <div class="ai-label">
+            <div class="ai-nm">${c.name}</div>
+            <div class="ai-sub">${c.sub}</div>
+          </div>
+          ${c.id===best?'<span class="best-tag">✓ সেরা</span>':''}
+        </div>
+        <div class="answer-box loading" id="ans-${c.id}">উত্তর আনছি...</div>
+        ${c.id!=='chatgpt'
+          ?`<a href="#" class="card-btn" style="background:${c.color};opacity:0.5;pointer-events:none" id="btn-${c.id}">⏳ অপেক্ষা করুন</a>`
+          :`<a href="${getChatGPTUrl(task)}" target="_blank" class="card-btn" style="background:${c.color}">🤖 ChatGPT এ খুলুন →</a>`
+        }
+      </div>`;
+  });
+  html+=`</div>`;
+  document.getElementById('results').innerHTML=html;
+  document.getElementById('results').scrollIntoView({behavior:'smooth'});
+
+  const [ca,ga]=await Promise.allSettled([fetchClaude(task),fetchGemini(task)]);
+
+  // Claude
+  const ct=ca.status==='fulfilled'?ca.value:'❌ ত্রুটি হয়েছে।';
+  document.getElementById('ans-claude').className='answer-box';
+  document.getElementById('ans-claude').textContent=ct;
+  const cb=document.getElementById('btn-claude');
+  cb.textContent='🔮 Claude এ বিস্তারিত দেখুন →';
+  cb.href=`https://claude.ai/new?q=${encodeURIComponent(task)}`;
+  cb.target='_blank';cb.style.opacity='1';cb.style.pointerEvents='auto';
+
+  // Gemini
+  const gt=ga.status==='fulfilled'?ga.value:'❌ ত্রুটি হয়েছে।';
+  document.getElementById('ans-gemini').className='answer-box';
+  document.getElementById('ans-gemini').textContent=gt;
+  const gb=document.getElementById('btn-gemini');
+  gb.textContent='✨ Gemini তে বিস্তারিত দেখুন →';
+  gb.href=`https://gemini.google.com/app?q=${encodeURIComponent(task)}`;
+  gb.target='_blank';gb.style.opacity='1';gb.style.pointerEvents='auto';
+
+  // ChatGPT answer box
+  document.getElementById('ans-chatgpt').className='answer-box';
+  document.getElementById('ans-chatgpt').textContent='👆 উপরের বাটনে ক্লিক করে ChatGPT তে সরাসরি এই প্রশ্ন করুন।';
+
+  btn.disabled=false;btn.innerHTML='🚀 উত্তর আনো';
+}
+
+document.getElementById('taskInput').addEventListener('keydown',e=>{
+  if(e.ctrlKey&&e.key==='Enter')start();
 });
 </script>
 </body>
