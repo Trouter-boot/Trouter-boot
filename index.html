@@ -7,24 +7,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
-  :root{
-    --bg:#07070f;
-    --card:#0e0e1a;
-    --border:#1a1a2e;
-    --text:#e2e8f0;
-    --muted:#475569;
-    --purple:#7c3aed;
-    --blue:#3b82f6;
-    --green:#10a37f;
-    --gemini:#4285f4;
-  }
+  :root{--bg:#07070f;--card:#0e0e1a;--border:#1a1a2e;--text:#e2e8f0;--muted:#475569;--purple:#7c3aed;--blue:#3b82f6;--green:#10a37f;--gemini:#4285f4}
   body{min-height:100vh;background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;display:flex;flex-direction:column;align-items:center;padding:40px 16px 80px}
-
   .logo{display:flex;align-items:center;gap:12px;margin-bottom:10px}
   .logo-icon{width:46px;height:46px;background:linear-gradient(135deg,#7c3aed,#3b82f6);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
   .logo h1{font-size:clamp(1.4rem,4vw,2rem);font-weight:800;background:linear-gradient(135deg,#c084fc,#818cf8,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
   .subtitle{color:var(--muted);font-size:clamp(0.8rem,2.5vw,0.92rem);margin-bottom:32px;text-align:center;padding:0 8px}
-
   .input-card{width:100%;max-width:780px;background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:18px 20px;margin-bottom:12px;transition:border-color .3s}
   .input-card:focus-within{border-color:var(--purple)}
   textarea{width:100%;background:transparent;border:none;outline:none;color:var(--text);font-size:clamp(0.9rem,2.5vw,1rem);resize:none;min-height:90px;font-family:inherit;line-height:1.7}
@@ -34,42 +22,28 @@
   .go-btn{padding:11px 24px;background:linear-gradient(135deg,var(--purple),var(--blue));border:none;border-radius:11px;color:#fff;font-size:0.92rem;cursor:pointer;font-weight:700;font-family:inherit;transition:transform .2s,opacity .2s;display:flex;align-items:center;gap:8px;white-space:nowrap}
   .go-btn:hover{transform:translateY(-2px)}
   .go-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
-
   #results{width:100%;max-width:780px;margin-top:24px}
   .section-label{font-size:0.72rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:12px;font-weight:600}
-
   .ai-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
-
   @media(max-width:700px){.ai-grid{grid-template-columns:1fr}}
   @media(min-width:701px) and (max-width:900px){.ai-grid{grid-template-columns:1fr 1fr}}
-
   .ai-card{background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:18px;display:flex;flex-direction:column;position:relative;overflow:hidden;transition:border-color .3s,transform .3s}
   .ai-card:hover{transform:translateY(-3px)}
   .ai-card.best{border-color:var(--purple);box-shadow:0 0 28px rgba(124,58,237,0.18)}
   .ai-card.best::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--purple),var(--blue))}
-
   .card-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
   .ai-emo{font-size:1.5rem;flex-shrink:0}
   .ai-label{flex:1;min-width:0}
-  .ai-nm{font-size:0.98rem;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ai-nm{font-size:0.98rem;font-weight:800}
   .ai-sub{font-size:0.72rem;color:var(--muted);margin-top:1px}
   .best-tag{background:var(--purple);color:#fff;padding:3px 9px;border-radius:20px;font-size:0.66rem;font-weight:700;white-space:nowrap;flex-shrink:0}
-
   .answer-box{flex:1;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:12px;padding:13px;font-size:0.83rem;line-height:1.75;color:#94a3b8;margin-bottom:13px;min-height:120px;white-space:pre-wrap;word-break:break-word;overflow-y:auto;max-height:300px}
-  .answer-box.loading{display:flex;align-items:center;justify-content:center;color:var(--muted);gap:8px;min-height:120px}
+  .answer-box.loading{display:flex;align-items:center;justify-content:center;color:var(--muted);gap:8px}
   .answer-box.loading::before{content:'';width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--purple);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
   @keyframes spin{to{transform:rotate(360deg)}}
-
-  .card-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border-radius:11px;color:#fff;text-decoration:none;font-weight:700;font-size:0.82rem;transition:opacity .2s,transform .2s;width:100%;justify-content:center;text-align:center}
+  .card-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border-radius:11px;color:#fff;text-decoration:none;font-weight:700;font-size:0.82rem;transition:opacity .2s,transform .2s;width:100%;justify-content:center}
   .card-btn:hover{opacity:0.85;transform:translateY(-1px)}
-
-  /* Mobile touch friendly */
-  @media(max-width:480px){
-    body{padding:24px 12px 60px}
-    .go-btn{width:100%;justify-content:center}
-    .input-footer{flex-direction:column;align-items:stretch}
-    .hint{display:none}
-  }
+  @media(max-width:480px){body{padding:24px 12px 60px}.go-btn{width:100%;justify-content:center}.input-footer{flex-direction:column;align-items:stretch}.hint{display:none}}
 </style>
 </head>
 <body>
@@ -91,32 +65,16 @@
 <div id="results"></div>
 
 <script>
-const GEMINI_KEY = "AIzaSyAnwUW36i3cZYpslGPNDPyI49WDoZX-ADw";
-
 function getChatGPTUrl(q){return `https://chatgpt.com/?q=${encodeURIComponent(q)}`;}
 
-async function fetchClaude(prompt){
-  try{
-    const r=await fetch("https://api.anthropic.com/v1/messages",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:prompt}]})
-    });
-    const d=await r.json();
-    return d.content?.[0]?.text||"উত্তর পাওয়া যায়নি।";
-  }catch{return "❌ Claude থেকে উত্তর আনতে সমস্যা হয়েছে।";}
-}
-
-async function fetchGemini(prompt){
-  try{
-    const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${GEMINI_KEY}`,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})
-    });
-    const d=await r.json();
-    return d.candidates?.[0]?.content?.parts?.[0]?.text||"উত্তর পাওয়া যায়নি।";
-  }catch{return "❌ Gemini থেকে উত্তর আনতে সমস্যা হয়েছে।";}
+async function callAPI(prompt, ai){
+  const r = await fetch("/api/ask", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({prompt, ai})
+  });
+  const d = await r.json();
+  return d.answer || "উত্তর পাওয়া যায়নি।";
 }
 
 function getBestAI(task){
@@ -165,9 +123,11 @@ async function start(){
   document.getElementById('results').innerHTML=html;
   document.getElementById('results').scrollIntoView({behavior:'smooth'});
 
-  const [ca,ga]=await Promise.allSettled([fetchClaude(task),fetchGemini(task)]);
+  const [ca,ga]=await Promise.allSettled([
+    callAPI(task,'claude'),
+    callAPI(task,'gemini')
+  ]);
 
-  // Claude
   const ct=ca.status==='fulfilled'?ca.value:'❌ ত্রুটি হয়েছে।';
   document.getElementById('ans-claude').className='answer-box';
   document.getElementById('ans-claude').textContent=ct;
@@ -176,7 +136,6 @@ async function start(){
   cb.href=`https://claude.ai/new?q=${encodeURIComponent(task)}`;
   cb.target='_blank';cb.style.opacity='1';cb.style.pointerEvents='auto';
 
-  // Gemini
   const gt=ga.status==='fulfilled'?ga.value:'❌ ত্রুটি হয়েছে।';
   document.getElementById('ans-gemini').className='answer-box';
   document.getElementById('ans-gemini').textContent=gt;
@@ -185,7 +144,6 @@ async function start(){
   gb.href=`https://gemini.google.com/app?q=${encodeURIComponent(task)}`;
   gb.target='_blank';gb.style.opacity='1';gb.style.pointerEvents='auto';
 
-  // ChatGPT answer box
   document.getElementById('ans-chatgpt').className='answer-box';
   document.getElementById('ans-chatgpt').textContent='👆 উপরের বাটনে ক্লিক করে ChatGPT তে সরাসরি এই প্রশ্ন করুন।';
 
